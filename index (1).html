@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Training Course Catalog</title>
+  <style>
+    :root{
+      --bg:#f5f3ff;
+      --bg-soft:#efeafe;
+      --card:#ffffff;
+      --text:#1f1b2d;
+      --muted:#6b6480;
+      --line:#ddd4fb;
+      --accent:#7b61ff;
+      --accent-dark:#694eea;
+      --accent-soft:#f1edff;
+      --shadow:0 10px 28px rgba(92, 74, 175, 0.10);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Segoe UI, Arial, sans-serif;
+      background:linear-gradient(180deg, var(--bg) 0%, #faf9ff 100%);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:24px;
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #ffffff 0%, #f3efff 100%);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:28px;
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+    }
+
+    .eyebrow{
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--accent);
+      margin-bottom:10px;
+    }
+
+    h1{
+      margin:0 0 10px 0;
+      font-size:32px;
+      line-height:1.15;
+    }
+
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.55;
+      max-width:920px;
+    }
+
+    .toolbar{
+      display:grid;
+      grid-template-columns:1.3fr .9fr .9fr auto;
+      gap:12px;
+      margin:0 0 18px 0;
+    }
+
+    .toolbar input,
+    .toolbar select{
+      width:100%;
+      padding:14px 16px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:15px;
+      color:var(--text);
+      outline:none;
+    }
+
+    .toolbar input:focus,
+    .toolbar select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(123, 97, 255, 0.12);
+    }
+
+    .toolbar button{
+      padding:14px 18px;
+      border:none;
+      border-radius:14px;
+      background:var(--accent);
+      color:#fff;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    .toolbar button:hover{background:var(--accent-dark)}
+
+    .stats{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+      color:var(--muted);
+      font-size:14px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:var(--accent-soft);
+      border:1px solid var(--line);
+      color:var(--accent-dark);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:600;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      min-height:340px;
+    }
+
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--accent-soft);
+      color:var(--accent-dark);
+      border:1px solid var(--line);
+    }
+
+    .card h3{
+      margin:0 0 10px 0;
+      font-size:21px;
+      line-height:1.22;
+    }
+
+    .meta{
+      display:grid;
+      gap:8px;
+      margin-bottom:12px;
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    .desc{
+      font-size:15px;
+      line-height:1.62;
+      color:#312b45;
+      margin:0 0 16px 0;
+      flex:1;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-top:auto;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      padding:12px 14px;
+      border-radius:12px;
+      font-weight:600;
+      font-size:14px;
+      transition:.15s ease;
+    }
+
+    .btn-primary{
+      background:var(--accent);
+      color:#fff;
+    }
+
+    .btn-primary:hover{
+      background:var(--accent-dark);
+    }
+
+    .btn-secondary{
+      background:#fff;
+      color:var(--accent-dark);
+      border:1px solid var(--line);
+    }
+
+    .btn-secondary:hover{
+      background:#faf8ff;
+    }
+
+    .empty{
+      display:none;
+      text-align:center;
+      padding:36px 18px;
+      border:1px dashed var(--line);
+      border-radius:18px;
+      background:#fff;
+      color:var(--muted);
+    }
+
+    .footer-note{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .toolbar{grid-template-columns:1fr 1fr}
+    }
+
+    @media (max-width: 640px){
+      .toolbar{grid-template-columns:1fr}
+      h1{font-size:28px}
+      .wrap{padding:16px}
+      .hero{padding:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Learning and Development</div>
+      <h1>Training Courses Available</h1>
+      <p>
+        Browse current training offerings, filter by topic, and submit interest through Microsoft Forms.
+        Each course card links directly to the registration form.
+      </p>
+    </section>
+
+    <section class="toolbar">
+      <input id="searchInput" type="text" placeholder="Search by title, topic, duration, or keyword" />
+      <select id="audienceFilter">
+        <option value="">All audiences</option>
+      </select>
+      <select id="topicFilter">
+        <option value="">All topics</option>
+      </select>
+      <button id="clearBtn" type="button">Clear filters</button>
+    </section>
+
+    <div class="stats">
+      <span class="pill"><span id="courseCount">0</span> course(s) shown</span>
+      <span>Click <strong>Register Interest</strong> to open the Microsoft Form.</span>
+    </div>
+
+    <section id="courseGrid" class="grid"></section>
+    <section id="emptyState" class="empty">
+      No courses match your current filters. Try a different keyword or clear the filters.
+    </section>
+
+    <div class="footer-note">
+      Hosted as a simple HTML catalog for iframe based embedding in SharePoint.
+    </div>
+  </div>
+
+  <script>
+    const courses = [
+      {
+        title: "Emotional Intelligence (Part 1)",
+        duration: "2 hours",
+        audience: "All employees",
+        topic: "Emotional Intelligence",
+        format: "Workshop",
+        summary: "This class is all about building emotional awareness and then communicating it in a way that helps, not hurts. We’ll use the RULER framework to practice the core skills: Recognizing, Understanding, Labeling, Expressing, and Regulating emotions. The goal is to catch what’s happening early (before it turns into frustration, shutdown, or conflict) and respond with intention. People leave with simple tools and phrases they can use in tense moments, when expectations are unclear, or in high-stress situations.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      },
+      {
+        title: "EQ in the Workplace (Part 2)",
+        duration: "2 hours",
+        audience: "All employees",
+        topic: "Emotional Intelligence",
+        format: "Workshop",
+        summary: "This is the “apply it at work” follow-up. We take emotional awareness and turn it into practical skills for everyday situations: giving and receiving feedback, handling conflict, partnering across teams, and staying steady when things get busy. We’ll also spend time on body language and nonverbal cues, since a lot of communication happens before anyone says a word. The focus is on reading the room, choosing your response, and keeping relationships solid even when the work is stressful.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      },
+      {
+        title: "Personality Types in the Workplace",
+        duration: "1.5 hours",
+        audience: "All employees",
+        topic: "Communication",
+        format: "Instructor led",
+        summary: "This session uses a Myers-Briggs type lens to explain why people communicate and work so differently. We’ll cover the main preference areas (how you get energy, take in information, make decisions, and approach structure), then translate that into real workplace behaviors: pace, detail level, communication style, how people handle change, and what tends to trigger stress. The point isn’t to label anyone. It’s to learn how to flex your approach so collaboration feels easier and less frustrating.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      },
+      {
+        title: "Team Building 101",
+        duration: "1 hour",
+        audience: "Teams",
+        topic: "Teamwork",
+        format: "Interactive workshop",
+        summary: "We’ll kick off with a fun team activity that creates a little pressure, some ambiguity, and a need to coordinate. After that, we’ll debrief it like a quick after-action review: what worked, what broke down, who did what, and why. Then we connect those lessons to real work: clear roles, communication under pressure, trust, problem-solving, and the small habits that make a team run smoothly.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      },
+      {
+        title: "Presentation and Facilitation Techniques for Leaders",
+        duration: "1.5 hours",
+        audience: "Leaders",
+        topic: "Leadership",
+        format: "Skills workshop",
+        summary: "Built for leaders who run meetings, huddles, trainings, and updates and want to sound clear and confident without overtalking. We’ll cover how to structure your message, keep people engaged, visual best practices when creating a presentation, and handle questions or pushback while still keeping the room with you. Leaders leave with a simple framework they can use to plan and deliver sessions that feel organized and worth attending.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      },
+      {
+        title: "AI, An Introductory Look at AI",
+        duration: "45 minutes",
+        audience: "All employees",
+        topic: "AI",
+        format: "Overview session",
+        summary: "This session provides a practical introduction to AI, including what it is, the history of it, where it is going, and its basic capabilities. It is designed to give people a grounded understanding of AI without overcomplicating it, helping them better understand why it matters and where it is starting to show up in everyday work.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      },
+      {
+        title: "AI and Mastering Copilot",
+        duration: "1 hour",
+        audience: "All employees",
+        topic: "AI",
+        format: "Practical workshop",
+        summary: "This session is all about bridging the gap between what we think AI does and what it can actually do for you at work. We’ll explore practical ways to use Microsoft Copilot to support day to day tasks, improve efficiency, and help people get more value out of the tools they already have access to.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      },
+      {
+        title: "AI Assisted Root Cause Analysis",
+        duration: "1 hour",
+        audience: "Leaders",
+        topic: "AI",
+        format: "Workshop",
+        summary: "This session focuses on using AI to strengthen root cause analysis and help teams get more out of the process. We’ll look at how AI can help expand thinking, surface possibilities, organize information, and help you wring more from your root cause analysis without replacing the human judgment that still matters most.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      },
+      {
+        title: "Building Dashboards in Excel Using Copilot",
+        duration: "1 hour",
+        audience: "Exempt employees",
+        topic: "AI",
+        format: "Interactive workshop",
+        summary: "This is an interactive workshop where participants learn how to use Copilot in Excel to help build dashboards in a practical, hands on way. The session focuses on turning data into something more useful and easier to read, while helping participants better understand how Copilot can support dashboard creation, reporting, and analysis.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      },
+      {
+        title: "CliftonStrengths",
+        duration: "2 hours",
+        audience: "Teams",
+        topic: "Leadership",
+        format: "Interactive session",
+        summary: "This is an interactive session using CliftonStrengths to help participants better understand themselves, understand others, and appreciate different perspectives.",
+        formLink: "https://forms.office.com/r/HgUVx6tuQ8",
+        detailsLink: ""
+      }
+    ];
+
+    const grid = document.getElementById("courseGrid");
+    const emptyState = document.getElementById("emptyState");
+    const searchInput = document.getElementById("searchInput");
+    const audienceFilter = document.getElementById("audienceFilter");
+    const topicFilter = document.getElementById("topicFilter");
+    const clearBtn = document.getElementById("clearBtn");
+    const courseCount = document.getElementById("courseCount");
+
+    function uniqueValues(key){
+      return [...new Set(courses.map(c => (c[key] || "").trim()).filter(Boolean))].sort();
+    }
+
+    function populateFilters(){
+      uniqueValues("audience").forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        audienceFilter.appendChild(option);
+      });
+
+      uniqueValues("topic").forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        topicFilter.appendChild(option);
+      });
+    }
+
+    function matches(course){
+      const q = searchInput.value.trim().toLowerCase();
+      const audience = audienceFilter.value;
+      const topic = topicFilter.value;
+
+      const haystack = [
+        course.title,
+        course.duration,
+        course.audience,
+        course.topic,
+        course.format,
+        course.summary
+      ].join(" ").toLowerCase();
+
+      const searchMatch = !q || haystack.includes(q);
+      const audienceMatch = !audience || course.audience === audience;
+      const topicMatch = !topic || course.topic === topic;
+
+      return searchMatch && audienceMatch && topicMatch;
+    }
+
+    function createCard(course){
+      const article = document.createElement("article");
+      article.className = "card";
+
+      const badges = `
+        <div class="badges">
+          <span class="badge">${course.topic || "General"}</span>
+          <span class="badge">${course.format || "Course"}</span>
+        </div>
+      `;
+
+      const detailsButton = course.detailsLink
+        ? `<a class="btn btn-secondary" href="${course.detailsLink}" target="_blank" rel="noopener noreferrer">More Details</a>`
+        : "";
+
+      article.innerHTML = `
+        ${badges}
+        <h3>${course.title}</h3>
+        <div class="meta">
+          <div><strong>Duration:</strong> ${course.duration || "TBD"}</div>
+          <div><strong>Audience:</strong> ${course.audience || "All employees"}</div>
+        </div>
+        <p class="desc">${course.summary || ""}</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="${course.formLink}" target="_blank" rel="noopener noreferrer">Register Interest</a>
+          ${detailsButton}
+        </div>
+      `;
+      return article;
+    }
+
+    function render(){
+      const filtered = courses.filter(matches);
+      grid.innerHTML = "";
+      filtered.forEach(course => grid.appendChild(createCard(course)));
+      courseCount.textContent = filtered.length;
+      emptyState.style.display = filtered.length ? "none" : "block";
+    }
+
+    clearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      audienceFilter.value = "";
+      topicFilter.value = "";
+      render();
+    });
+
+    [searchInput, audienceFilter, topicFilter].forEach(el => {
+      el.addEventListener("input", render);
+      el.addEventListener("change", render);
+    });
+
+    populateFilters();
+    render();
+  </script>
+</body>
+</html>
