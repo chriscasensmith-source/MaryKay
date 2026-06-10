@@ -20,10 +20,30 @@ A dead-simple tour volunteer sign-up app — a friendlier replacement for SignUp
 | --- | --- | --- |
 | `DATABASE_URL` | yes | Postgres connection string from Neon (use the pooled URL, with `?sslmode=require`) |
 | `ADMIN_PASSCODE` | yes | Passcode for the `/admin` page — pick something private |
-| `RESEND_API_KEY` | yes (for email) | API key from [resend.com](https://resend.com). Without it, the app still works but skips sending email (logged to console) |
-| `APP_URL` | yes | Public URL of the app, used to build links in emails, e.g. `https://r3-tours.onrender.com` (no trailing slash) |
-| `RESEND_FROM` | recommended | From address for emails, e.g. `R3 Tour Team <tours@yourdomain.com>`. The domain must be verified in Resend. If unset, falls back to Resend's test sender, which only delivers to your own Resend account email |
+| `RESEND_API_KEY` | optional | API key from [resend.com](https://resend.com). Leave unset to run without email — see ["Running without email"](#running-without-email) below |
+| `APP_URL` | yes (when email is on) | Public URL of the app, used to build links in emails, e.g. `https://r3-tours.onrender.com` (no trailing slash) |
+| `RESEND_FROM` | optional | From address for emails, e.g. `R3 Tour Team <tours@yourdomain.com>`. The domain must be verified in Resend. If unset, falls back to Resend's test sender, which only delivers to your own Resend account email |
 | `TZ` | recommended | Timezone tour times are entered/displayed in, e.g. `America/Chicago`. Set this on Render too — otherwise the server assumes UTC |
+
+## Running without email
+
+The app works fully without an email service. If `RESEND_API_KEY` is not set:
+
+- Signups, edits, and cancellations all behave normally — every email send is
+  skipped silently, and the hourly reminder job idles without doing anything.
+- After signing up, volunteers see an on-screen confirmation with the tour
+  details instead of receiving a confirmation email.
+- Volunteers cancel from the public page: every tour card has a small
+  **"Can't make it?"** link. Tapping it asks for the email they signed up
+  with; if it matches a signup on that tour, they're taken off the list and
+  the open-spots count updates. No emails are revealed if it doesn't match.
+- The organizer's "email guides about date changes" and "email everyone when a
+  tour is cancelled" behaviors are skipped.
+
+To turn email on later, just add `RESEND_API_KEY` (and `RESEND_FROM` +
+`APP_URL`) and redeploy — no code changes needed. Reminders resume
+automatically for upcoming tours, and the "Can't make it?" link keeps working
+alongside the email cancel links.
 
 ## Run locally
 

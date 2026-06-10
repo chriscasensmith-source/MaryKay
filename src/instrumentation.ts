@@ -24,4 +24,7 @@ export async function register() {
   });
 
   console.log("[reminders] hourly reminder cron scheduled");
+  if (!process.env.RESEND_API_KEY) {
+    console.log("[email] RESEND_API_KEY not set — running without email (sends are skipped)");
+  }
 }

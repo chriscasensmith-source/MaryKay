@@ -24,11 +24,13 @@ function fromAddress(): string {
   return process.env.RESEND_FROM ?? "R3 Tour Team <onboarding@resend.dev>";
 }
 
+/** Email is optional — without RESEND_API_KEY the app runs with all sends skipped. */
+export function emailEnabled(): boolean {
+  return Boolean(process.env.RESEND_API_KEY);
+}
+
 async function send(to: string, subject: string, html: string) {
-  if (!process.env.RESEND_API_KEY) {
-    console.warn(`[email] RESEND_API_KEY not set — skipping "${subject}" to ${to}`);
-    return;
-  }
+  if (!emailEnabled()) return; // running without email — skip silently
   const resend = new Resend(process.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({ from: fromAddress(), to, subject, html });
   if (error) {

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { formatDate, formatTime } from "@/lib/format";
-import { LANGUAGE_BADGE } from "@/lib/language";
+import { LANGUAGE_BADGE, LANGUAGE_LABEL } from "@/lib/language";
+import { emailEnabled } from "@/lib/email";
 import { cancelSignup } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
@@ -61,10 +62,18 @@ export default async function ManageSignupPage({
         {query.new ? (
           <>
             <h1 className="text-2xl font-bold text-ink">You&apos;re signed up! 🎉</h1>
-            <p className="mt-2 text-gray-500">
-              A confirmation email is on its way to <strong>{signup.email}</strong>. It
-              includes this page&apos;s link in case you need to cancel later.
-            </p>
+            {emailEnabled() ? (
+              <p className="mt-2 text-gray-500">
+                A confirmation email is on its way to <strong>{signup.email}</strong>. It
+                includes this page&apos;s link in case you need to cancel later.
+              </p>
+            ) : (
+              <p className="mt-2 text-gray-500">
+                You&apos;re on the list as <strong>{signup.email}</strong>. Want to cancel
+                later? Just come back to the tours page and tap{" "}
+                <strong>&ldquo;Can&apos;t make it?&rdquo;</strong> on this tour.
+              </p>
+            )}
           </>
         ) : (
           <h1 className="text-2xl font-bold text-ink">Your signup</h1>
@@ -79,6 +88,7 @@ export default async function ManageSignupPage({
           <p className="font-semibold text-ink">{slot.title}</p>
           <p className="mt-1 font-medium text-accent-600">{formatDate(slot.startsAt)}</p>
           <p className="text-gray-500">{formatTime(slot.startsAt)}</p>
+          <p className="mt-1 text-sm text-gray-500">Language: {LANGUAGE_LABEL[slot.language]}</p>
           {slot.expectedGuests > 0 && (
             <p className="mt-1 text-sm text-gray-500">
               Group size: ~{slot.expectedGuests} guests
