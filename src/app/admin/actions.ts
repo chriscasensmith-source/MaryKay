@@ -2,9 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import type { TourLanguage } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { requireAdmin, setAdminCookie, clearAdminCookie } from "@/lib/auth";
-import { sendSlotCancelledEmail } from "@/lib/email";
+import { sendSlotCancelledEmail, sendSlotChangedEmail } from "@/lib/email";
+import { LANGUAGES } from "@/lib/language";
 
 // Like the public actions, these always redirect (never return state) so
 // they work identically with and without JavaScript.
@@ -32,34 +34,56 @@ export async function saveSlot(slotId: string | null, formData: FormData) {
   const notes = String(formData.get("notes") ?? "").trim() || null;
   const date = String(formData.get("date") ?? "");
   const time = String(formData.get("time") ?? "");
+  const language = String(formData.get("language") ?? "ENGLISH") as TourLanguage;
   const capacity = Number(formData.get("capacity"));
+  const guestsRaw = String(formData.get("expectedGuests") ?? "").trim();
+  const expectedGuests = guestsRaw === "" ? 0 : Number(guestsRaw);
 
   const back = (error: string): never => {
     const q = new URLSearchParams({
       error,
+      form: slotId ?? "new",
       title,
       notes: notes ?? "",
       date,
       time,
+      language,
       capacity: String(formData.get("capacity") ?? ""),
+      expectedGuests: guestsRaw,
     });
-    redirect(`${slotId ? `/admin/slots/${slotId}` : "/admin/new"}?${q}`);
+    redirect(`/admin?${q}#form-${slotId ?? "new"}`);
   };
 
   if (!title) back("title");
+  if (!LANGUAGES.includes(language)) back("language");
   if (!Number.isInteger(capacity) || capacity < 1) back("capacity");
+  if (!Number.isInteger(expectedGuests) || expectedGuests < 0) back("guests");
 
   // Parsed in the server's local timezone (set TZ env var on Render).
   const startsAt = date && time ? new Date(`${date}T${time}`) : new Date(NaN);
   if (Number.isNaN(startsAt.getTime())) back("datetime");
 
+  const data = { title, notes, startsAt, language, capacity, expectedGuests };
+
   if (slotId) {
-    await prisma.slot.update({
+    const existing = await prisma.slot.findUnique({
       where: { id: slotId },
-      data: { title, notes, startsAt, capacity },
+      include: { signups: true },
     });
+    if (!existing) redirect("/admin");
+
+    const updated = await prisma.slot.update({ where: { id: slotId }, data });
+
+    // Date or time changed → let every signed-up guide know.
+    if (existing.startsAt.getTime() !== startsAt.getTime() && existing.signups.length > 0) {
+      await Promise.allSettled(
+        existing.signups.map((s) =>
+          sendSlotChangedEmail(s.email, s.name, updated, s.cancelToken)
+        )
+      );
+    }
   } else {
-    await prisma.slot.create({ data: { title, notes, startsAt, capacity } });
+    await prisma.slot.create({ data });
   }
 
   revalidatePath("/");

@@ -1,10 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-accent-50: #fdf2f8;
-  --color-accent-100: #fce7f3;
-  --color-accent-200: #fbcfe8;
-  --color-accent-500: #ec4899;
-  --color-accent-600: #db2777;
-  --color-accent-700: #be185d;
+  /* Mary Kay pink */
+  --color-accent-50: #fdf0f7;
+  --color-accent-100: #fbe4ef; /* soft blush */
+  --color-accent-200: #f6c3dd;
+  --color-accent-500: #ee52a0;
+  --color-accent-600: #e8348b; /* primary */
+  --color-accent-700: #c32672;
+
+  /* blush page background */
+  --color-blush: #fbe4ef;
+
+  /* charcoal text */
+  --color-ink: #2d2a2e;
+
+  /* gold accents (language + Full badges) */
+  --color-gold-100: #f5e9c8;
+  --color-gold-500: #c9a227;
+  --color-gold-700: #8f7119;
 }

@@ -2,13 +2,15 @@
 
 A dead-simple tour volunteer sign-up app — a friendlier replacement for SignUpGenius.
 
-- **Volunteers** open a shared link, tap a tour, enter name + email, done. No accounts.
-  They get a confirmation email with a personal cancel link, and a reminder email
-  24 hours before their tour.
-- **The organizer** manages everything from `/admin` (protected by a passcode):
-  create/edit/cancel tour slots, see and remove signups, and copy the public
-  signup link for email blasts. Cancelling a tour automatically emails everyone
-  who signed up.
+- **Guides (volunteers)** open a shared link, tap a tour, enter name + email, done.
+  No accounts. They get a confirmation email with a personal cancel link, and a
+  reminder email 24 hours before their tour. Spanish tours show a gold "Español"
+  badge and their confirmation/reminder emails are sent in both Spanish and English.
+- **The organizer** manages everything from `/admin` (protected by a passcode) with
+  quick inline forms: create/edit/cancel tour slots (title, date, time, language,
+  guides needed, expected group size, notes), see and remove signups, and copy the
+  public signup link for email blasts. Cancelling a tour automatically emails
+  everyone who signed up; changing a tour's date or time does too.
 
 **Stack:** Next.js (App Router) · Prisma · PostgreSQL (Neon) · Tailwind CSS · Resend · node-cron
 
@@ -46,7 +48,8 @@ A dead-simple tour volunteer sign-up app — a friendlier replacement for SignUp
    npm run db:seed
    ```
 
-   The seed adds 3 example tour slots (it skips itself if slots already exist).
+   The seed adds 3 example tour slots — English, Spanish, and Bilingual (it
+   skips itself if slots already exist).
 
 4. **Start the dev server**
 

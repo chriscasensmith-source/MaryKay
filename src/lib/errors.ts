@@ -10,7 +10,9 @@ export const SIGNUP_ERRORS: Record<string, string> = {
 export const SLOT_ERRORS: Record<string, string> = {
   title: "Please enter a title.",
   datetime: "Please pick a valid date and time.",
-  capacity: "Capacity must be at least 1.",
+  language: "Please pick a valid language.",
+  capacity: "Guides needed must be at least 1.",
+  guests: "People attending must be 0 or more.",
 };
 
 export function errorMessage(map: Record<string, string>, code?: string): string | null {

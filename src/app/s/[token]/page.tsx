@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { formatDate, formatTime } from "@/lib/format";
+import { LANGUAGE_BADGE } from "@/lib/language";
 import { cancelSignup } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
@@ -26,14 +27,14 @@ export default async function ManageSignupPage({
         <div className="rounded-2xl bg-white p-8 text-center shadow-sm">
           {query.cancelled ? (
             <>
-              <h1 className="text-2xl font-bold text-gray-900">Signup cancelled</h1>
+              <h1 className="text-2xl font-bold text-ink">Signup cancelled</h1>
               <p className="mt-2 text-gray-500">
                 Thanks for letting us know — your spot is open for someone else.
               </p>
             </>
           ) : (
             <>
-              <h1 className="text-2xl font-bold text-gray-900">Link no longer valid</h1>
+              <h1 className="text-2xl font-bold text-ink">Link no longer valid</h1>
               <p className="mt-2 text-gray-500">
                 This signup may have already been cancelled.
               </p>
@@ -52,26 +53,37 @@ export default async function ManageSignupPage({
 
   const { slot } = signup;
   const slotCancelled = slot.status === "CANCELLED";
+  const badge = LANGUAGE_BADGE[slot.language];
 
   return (
     <main className="mx-auto max-w-lg px-4 py-8">
       <div className="rounded-2xl bg-white p-6 shadow-sm">
         {query.new ? (
           <>
-            <h1 className="text-2xl font-bold text-gray-900">You&apos;re signed up! 🎉</h1>
+            <h1 className="text-2xl font-bold text-ink">You&apos;re signed up! 🎉</h1>
             <p className="mt-2 text-gray-500">
               A confirmation email is on its way to <strong>{signup.email}</strong>. It
               includes this page&apos;s link in case you need to cancel later.
             </p>
           </>
         ) : (
-          <h1 className="text-2xl font-bold text-gray-900">Your signup</h1>
+          <h1 className="text-2xl font-bold text-ink">Your signup</h1>
         )}
 
-        <div className="mt-5 rounded-xl bg-accent-50 p-4">
-          <p className="font-semibold text-gray-900">{slot.title}</p>
+        <div className="mt-5 rounded-xl bg-accent-100 p-4">
+          {badge && (
+            <span className="mb-2 inline-block rounded-full bg-gold-500 px-3 py-1 text-sm font-bold uppercase tracking-wide text-white shadow-sm">
+              {badge}
+            </span>
+          )}
+          <p className="font-semibold text-ink">{slot.title}</p>
           <p className="mt-1 font-medium text-accent-600">{formatDate(slot.startsAt)}</p>
           <p className="text-gray-500">{formatTime(slot.startsAt)}</p>
+          {slot.expectedGuests > 0 && (
+            <p className="mt-1 text-sm text-gray-500">
+              Group size: ~{slot.expectedGuests} guests
+            </p>
+          )}
           {slot.notes && <p className="mt-2 text-sm text-gray-500">{slot.notes}</p>}
         </div>
 
@@ -83,7 +95,7 @@ export default async function ManageSignupPage({
           <form action={cancelSignup.bind(null, token)} className="mt-6">
             <button
               type="submit"
-              className="w-full rounded-xl border-2 border-gray-200 px-4 py-4 text-base font-semibold text-gray-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-[0.98]"
+              className="w-full rounded-xl border-2 border-accent-100 px-4 py-4 text-base font-semibold text-gray-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-[0.98]"
             >
               Cancel my signup
             </button>

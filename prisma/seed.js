@@ -22,24 +22,30 @@ async function main() {
         title: "Morning Facility Tour",
         notes: "Meet at the main lobby 10 minutes early. Comfortable shoes recommended.",
         startsAt: daysFromNow(3, 10, 0),
+        language: "ENGLISH",
         capacity: 4,
+        expectedGuests: 20,
       },
       {
-        title: "Afternoon Facility Tour",
-        notes: "School group visit — extra hands appreciated!",
+        title: "Recorrido en Español",
+        notes: "Grupo comunitario — ¡se agradecen manos extra! Meet at the main lobby.",
         startsAt: daysFromNow(5, 14, 30),
+        language: "SPANISH",
         capacity: 6,
+        expectedGuests: 30,
       },
       {
         title: "VIP Donor Tour",
         notes: "Small group, business casual please.",
         startsAt: daysFromNow(10, 11, 0),
+        language: "BILINGUAL",
         capacity: 2,
+        expectedGuests: 8,
       },
     ],
   });
 
-  console.log("Seeded 3 example tour slots.");
+  console.log("Seeded 3 example tour slots (English, Spanish, Bilingual).");
 }
 
 main()

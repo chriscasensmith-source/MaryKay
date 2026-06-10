@@ -3,13 +3,14 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { formatDate, formatTime } from "@/lib/format";
 import { errorMessage, SIGNUP_ERRORS } from "@/lib/errors";
+import { LANGUAGE_BADGE } from "@/lib/language";
 import { signUp } from "@/app/actions";
 import SubmitButton from "@/components/submit-button";
 
 export const dynamic = "force-dynamic";
 
 const inputClass =
-  "mt-1 w-full rounded-xl border border-gray-300 px-4 py-3 text-base focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-200";
+  "mt-1 w-full rounded-xl border border-accent-200 px-4 py-3 text-base text-ink focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-100";
 
 export default async function SignupPage({
   params,
@@ -30,6 +31,7 @@ export default async function SignupPage({
   const remaining = Math.max(0, slot.capacity - slot._count.signups);
   const isFull = remaining === 0;
   const error = errorMessage(SIGNUP_ERRORS, query.error);
+  const badge = LANGUAGE_BADGE[slot.language];
 
   return (
     <main className="mx-auto max-w-lg px-4 py-8">
@@ -38,9 +40,19 @@ export default async function SignupPage({
       </Link>
 
       <div className="mt-4 rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-bold text-gray-900">{slot.title}</h1>
+        {badge && (
+          <span className="mb-2 inline-block rounded-full bg-gold-500 px-3 py-1 text-sm font-bold uppercase tracking-wide text-white shadow-sm">
+            {badge}
+          </span>
+        )}
+        <h1 className="text-2xl font-bold text-ink">{slot.title}</h1>
         <p className="mt-2 font-medium text-accent-600">{formatDate(slot.startsAt)}</p>
         <p className="text-gray-500">{formatTime(slot.startsAt)}</p>
+        {slot.expectedGuests > 0 && (
+          <p className="mt-2 text-sm text-gray-500">
+            Group size: ~{slot.expectedGuests} guests
+          </p>
+        )}
         {slot.notes && <p className="mt-3 text-gray-600">{slot.notes}</p>}
         <p className="mt-3 text-sm text-gray-400">
           {remaining} spot{remaining === 1 ? "" : "s"} left
@@ -49,7 +61,7 @@ export default async function SignupPage({
 
       {isFull ? (
         <div className="mt-6 rounded-2xl bg-white p-6 text-center shadow-sm">
-          <p className="font-semibold text-gray-700">This tour is full.</p>
+          <p className="font-semibold text-ink">This tour is full.</p>
           <Link href="/" className="mt-2 inline-block font-medium text-accent-600">
             See other tours
           </Link>
@@ -59,10 +71,10 @@ export default async function SignupPage({
           action={signUp.bind(null, slot.id)}
           className="mt-6 rounded-2xl bg-white p-6 shadow-sm"
         >
-          <h2 className="text-lg font-semibold text-gray-900">Sign me up</h2>
+          <h2 className="text-lg font-semibold text-ink">Sign me up</h2>
 
           <label className="mt-4 block">
-            <span className="text-sm font-medium text-gray-700">Your name</span>
+            <span className="text-sm font-medium text-ink">Your name</span>
             <input
               type="text"
               name="name"
@@ -74,7 +86,7 @@ export default async function SignupPage({
           </label>
 
           <label className="mt-4 block">
-            <span className="text-sm font-medium text-gray-700">Your email</span>
+            <span className="text-sm font-medium text-ink">Your email</span>
             <input
               type="email"
               name="email"
