@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SlotStatus {
+  ACTIVE
+  CANCELLED
+}
+
+enum TourLanguage {
+  ENGLISH
+  SPANISH
+  BILINGUAL
+}
+
+model Slot {
+  id             String       @id @default(cuid())
+  title          String
+  notes          String?
+  startsAt       DateTime
+  language       TourLanguage @default(ENGLISH)
+  capacity       Int // guides needed = signup capacity
+  expectedGuests Int          @default(0) // expected attendee count, informational
+  status         SlotStatus   @default(ACTIVE)
+  reminderSentAt DateTime?
+  createdAt      DateTime     @default(now())
+  signups        Signup[]
+}
+
+model Signup {
+  id          String   @id @default(cuid())
+  slotId      String
+  slot        Slot     @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  name        String
+  email       String
+  cancelToken String   @unique @default(cuid())
+  createdAt   DateTime @default(now())
+
+  @@unique([slotId, email])
+}
