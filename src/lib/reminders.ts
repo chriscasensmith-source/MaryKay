@@ -1,5 +1,5 @@
 import { prisma } from "./db";
-import { sendReminderEmail } from "./email";
+import { emailEnabled, sendReminderEmail } from "./email";
 
 /**
  * Finds active slots starting within the next 24 hours that haven't had
@@ -7,6 +7,10 @@ import { sendReminderEmail } from "./email";
  * Runs hourly via node-cron (see src/instrumentation.ts).
  */
 export async function sendDueReminders() {
+  // Without email configured there's nothing to do. Slots are left unmarked,
+  // so reminders resume automatically once RESEND_API_KEY is added.
+  if (!emailEnabled()) return;
+
   const now = new Date();
   const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 

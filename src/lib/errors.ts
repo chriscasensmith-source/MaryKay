@@ -7,6 +7,12 @@ export const SIGNUP_ERRORS: Record<string, string> = {
   unknown: "Something went wrong. Please try again.",
 };
 
+export const CANCEL_ERRORS: Record<string, string> = {
+  email: "Please enter a valid email address.",
+  nomatch:
+    "We couldn't find a signup with that email for this tour. Double-check the spelling, or maybe you signed up with a different address?",
+};
+
 export const SLOT_ERRORS: Record<string, string> = {
   title: "Please enter a title.",
   datetime: "Please pick a valid date and time.",

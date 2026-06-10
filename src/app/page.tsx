@@ -37,9 +37,7 @@ export default async function HomePage() {
             const badge = LANGUAGE_BADGE[slot.language];
             const card = (
               <div
-                className={`rounded-2xl bg-white p-5 shadow-sm transition ${
-                  isFull ? "opacity-70" : "active:scale-[0.98] hover:shadow-md"
-                }`}
+                className={`p-5 ${isFull ? "opacity-70" : ""}`}
               >
                 {badge && (
                   <span className="mb-2 inline-block rounded-full bg-gold-500 px-3 py-1 text-sm font-bold uppercase tracking-wide text-white shadow-sm">
@@ -78,7 +76,23 @@ export default async function HomePage() {
 
             return (
               <li key={slot.id}>
-                {isFull ? card : <Link href={`/signup/${slot.id}`}>{card}</Link>}
+                <div className="rounded-2xl bg-white shadow-sm transition hover:shadow-md">
+                  {isFull ? (
+                    card
+                  ) : (
+                    <Link href={`/signup/${slot.id}`} className="block active:scale-[0.98]">
+                      {card}
+                    </Link>
+                  )}
+                  <div className="border-t border-accent-100 px-5 py-2.5 text-right">
+                    <Link
+                      href={`/cancel/${slot.id}`}
+                      className="text-sm font-medium text-gray-400 transition hover:text-accent-600"
+                    >
+                      Can&apos;t make it?
+                    </Link>
+                  </div>
+                </div>
               </li>
             );
           })}

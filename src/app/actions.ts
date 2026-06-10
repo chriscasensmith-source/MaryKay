@@ -62,6 +62,30 @@ export async function signUp(slotId: string, formData: FormData) {
   redirect(`/s/${cancelToken}?new=1`);
 }
 
+/**
+ * On-page cancellation for when email is off (no cancel link in the inbox):
+ * the volunteer enters the email they signed up with on /cancel/[slotId].
+ */
+export async function cancelByEmail(slotId: string, formData: FormData) {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+
+  const back = (error: string): never => {
+    const q = new URLSearchParams({ error, email });
+    redirect(`/cancel/${slotId}?${q}`);
+  };
+
+  if (!EMAIL_RE.test(email)) back("email");
+
+  const signup = await prisma.signup.findUnique({
+    where: { slotId_email: { slotId, email } },
+  });
+  if (!signup) back("nomatch");
+
+  await prisma.signup.delete({ where: { id: signup!.id } });
+  revalidatePath("/");
+  redirect(`/cancel/${slotId}?done=1`);
+}
+
 export async function cancelSignup(token: string) {
   const signup = await prisma.signup.findUnique({ where: { cancelToken: token } });
   if (signup) {

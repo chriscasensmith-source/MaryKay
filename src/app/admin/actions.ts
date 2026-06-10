@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import type { TourLanguage } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { requireAdmin, setAdminCookie, clearAdminCookie } from "@/lib/auth";
-import { sendSlotCancelledEmail, sendSlotChangedEmail } from "@/lib/email";
+import { emailEnabled, sendSlotCancelledEmail, sendSlotChangedEmail } from "@/lib/email";
 import { LANGUAGES } from "@/lib/language";
 
 // Like the public actions, these always redirect (never return state) so
@@ -74,8 +74,12 @@ export async function saveSlot(slotId: string | null, formData: FormData) {
 
     const updated = await prisma.slot.update({ where: { id: slotId }, data });
 
-    // Date or time changed → let every signed-up guide know.
-    if (existing.startsAt.getTime() !== startsAt.getTime() && existing.signups.length > 0) {
+    // Date or time changed → let every signed-up guide know (when email is on).
+    if (
+      emailEnabled() &&
+      existing.startsAt.getTime() !== startsAt.getTime() &&
+      existing.signups.length > 0
+    ) {
       await Promise.allSettled(
         existing.signups.map((s) =>
           sendSlotChangedEmail(s.email, s.name, updated, s.cancelToken)
@@ -102,9 +106,11 @@ export async function cancelSlot(slotId: string) {
   if (slot && slot.status !== "CANCELLED") {
     await prisma.slot.update({ where: { id: slotId }, data: { status: "CANCELLED" } });
 
-    await Promise.allSettled(
-      slot.signups.map((s) => sendSlotCancelledEmail(s.email, s.name, slot))
-    );
+    if (emailEnabled()) {
+      await Promise.allSettled(
+        slot.signups.map((s) => sendSlotCancelledEmail(s.email, s.name, slot))
+      );
+    }
 
     revalidatePath("/");
     revalidatePath("/admin");

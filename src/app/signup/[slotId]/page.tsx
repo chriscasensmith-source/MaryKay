@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { formatDate, formatTime } from "@/lib/format";
 import { errorMessage, SIGNUP_ERRORS } from "@/lib/errors";
 import { LANGUAGE_BADGE } from "@/lib/language";
+import { emailEnabled } from "@/lib/email";
 import { signUp } from "@/app/actions";
 import SubmitButton from "@/components/submit-button";
 
@@ -97,7 +98,9 @@ export default async function SignupPage({
               className={inputClass}
             />
             <span className="mt-1 block text-xs text-gray-400">
-              We&apos;ll send your confirmation and a reminder here.
+              {emailEnabled()
+                ? "We'll send your confirmation and a reminder here."
+                : "We'll use this to find your signup if you ever need to cancel."}
             </span>
           </label>
 
