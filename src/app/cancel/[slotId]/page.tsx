@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { formatDate, formatTime } from "@/lib/format";
+import { formatCardDateTime, formatDate } from "@/lib/format";
 import { errorMessage, CANCEL_ERRORS } from "@/lib/errors";
 import { LANGUAGE_BADGE } from "@/lib/language";
 import { cancelByEmail } from "@/app/actions";
@@ -63,8 +63,7 @@ export default async function CancelBySlotPage({
             </span>
           )}
           <p className="font-semibold text-ink">{slot.title}</p>
-          <p className="mt-1 font-medium text-accent-600">{formatDate(slot.startsAt)}</p>
-          <p className="text-gray-500">{formatTime(slot.startsAt)}</p>
+          <p className="mt-1 font-medium text-accent-600">{formatCardDateTime(slot.startsAt)}</p>
         </div>
 
         <form action={cancelByEmail.bind(null, slot.id)} className="mt-5">

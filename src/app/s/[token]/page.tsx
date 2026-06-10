@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { formatDate, formatTime } from "@/lib/format";
+import { formatCardDateTime } from "@/lib/format";
 import { LANGUAGE_BADGE, LANGUAGE_LABEL } from "@/lib/language";
 import { emailEnabled } from "@/lib/email";
 import { cancelSignup } from "@/app/actions";
@@ -86,8 +86,7 @@ export default async function ManageSignupPage({
             </span>
           )}
           <p className="font-semibold text-ink">{slot.title}</p>
-          <p className="mt-1 font-medium text-accent-600">{formatDate(slot.startsAt)}</p>
-          <p className="text-gray-500">{formatTime(slot.startsAt)}</p>
+          <p className="mt-1 font-medium text-accent-600">{formatCardDateTime(slot.startsAt)}</p>
           <p className="mt-1 text-sm text-gray-500">Language: {LANGUAGE_LABEL[slot.language]}</p>
           {slot.expectedGuests > 0 && (
             <p className="mt-1 text-sm text-gray-500">
@@ -96,6 +95,22 @@ export default async function ManageSignupPage({
           )}
           {slot.notes && <p className="mt-2 text-sm text-gray-500">{slot.notes}</p>}
         </div>
+
+        {!slotCancelled && (
+          <div className="mt-5">
+            <a
+              href={`/calendar/${slot.id}`}
+              download
+              className="block w-full rounded-xl bg-accent-600 px-4 py-4 text-center text-base font-semibold text-white transition hover:bg-accent-700 active:scale-[0.98]"
+            >
+              📅 Add to calendar
+            </a>
+            <p className="mt-1.5 text-center text-xs text-gray-400">
+              Works with Outlook, Google, and Apple Calendar. Includes a reminder 1 hour
+              before the tour.
+            </p>
+          </div>
+        )}
 
         {slotCancelled ? (
           <p className="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">

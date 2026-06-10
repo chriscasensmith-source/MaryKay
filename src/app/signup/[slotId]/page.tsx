@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { formatDate, formatTime } from "@/lib/format";
+import { formatCardDateTime } from "@/lib/format";
 import { errorMessage, SIGNUP_ERRORS } from "@/lib/errors";
 import { LANGUAGE_BADGE } from "@/lib/language";
 import { emailEnabled } from "@/lib/email";
@@ -47,15 +47,14 @@ export default async function SignupPage({
           </span>
         )}
         <h1 className="text-2xl font-bold text-ink">{slot.title}</h1>
-        <p className="mt-2 font-medium text-accent-600">{formatDate(slot.startsAt)}</p>
-        <p className="text-gray-500">{formatTime(slot.startsAt)}</p>
-        {slot.expectedGuests > 0 && (
-          <p className="mt-2 text-sm text-gray-500">
-            Group size: ~{slot.expectedGuests} guests
-          </p>
-        )}
-        {slot.notes && <p className="mt-3 text-gray-600">{slot.notes}</p>}
-        <p className="mt-3 text-sm text-gray-400">
+        <p className="mt-1 font-medium text-accent-600">
+          {formatCardDateTime(slot.startsAt)}
+          {slot.expectedGuests > 0 && (
+            <span className="font-normal text-gray-400"> · ~{slot.expectedGuests} guests</span>
+          )}
+        </p>
+        {slot.notes && <p className="mt-2 text-gray-600">{slot.notes}</p>}
+        <p className="mt-2 text-sm text-gray-400">
           {remaining} spot{remaining === 1 ? "" : "s"} left
         </p>
       </div>

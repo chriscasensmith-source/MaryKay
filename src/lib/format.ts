@@ -17,6 +17,16 @@ export function formatDateTime(date: Date): string {
   return `${formatDate(date)} at ${formatTime(date)}`;
 }
 
+/** Compact one-liner for tour cards, e.g. "Wed, June 17 · 1:45 PM". */
+export function formatCardDateTime(date: Date): string {
+  const day = date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+  });
+  return `${day} · ${formatTime(date)}`;
+}
+
 export function formatDateTimeEs(date: Date): string {
   const d = date.toLocaleDateString("es-US", {
     weekday: "long",
